@@ -2,7 +2,7 @@
 
 import { TextField, Box, Modal, Typography, Button } from '@mui/material'
 import './App.css'
-import { useState, useRef, createContext} from 'react'
+import { useState, useRef, createContext, Fragment} from 'react'
 import { useQuery, gql } from '@apollo/client';
 import Book from './components/Book';
 import BookSearchItem from './components/BookSearchItem';
@@ -10,6 +10,9 @@ import BookSearchItem from './components/BookSearchItem';
 import type { Book as BookType } from './components/Book';
 import BookDetails from './components/BookDetail';
 import AddBookView from './components/AddBookView';
+import FavouriteBooks from './components/FavouriteBooks';
+import { read } from 'fs';
+import BookReadListView from './components/BookReadListView';
 
 
 const GET_BOOKS = gql`
@@ -29,9 +32,11 @@ export type AddToReadListContextType = {books: BookType[], setBooks: React.Dispa
 export const AddToReadListContext = createContext<AddToReadListContextType>(null)
 export const ModalControlContext = createContext<any>(null)
 export const AddBookViewModalContext = createContext<any>(null)
+export const FavouriteBooksContext = createContext<any>(null)
 export const SetSelectedBookContext = createContext<any>(null)
 export const SearchSelectContext = createContext<any>(null)
 export const SearchInputContext = createContext<any>(null)
+
 
 function App() {
 
@@ -44,7 +49,7 @@ function App() {
   const [readList, setReadList] = useState<Array<BookType>>([])
   const [openModal, setOpenModal] = useState<boolean>(false)
   const [openAddBookModal, setOpenAddBookModal] = useState<boolean>(false)
-  // const [openReadList, setOpenReadList] = useState<boolean>(false)
+  const [openFavouriteBookModal, setOpenFavouriteBooksList] = useState<boolean>(false)
   const [selectedBook, setSelectedBook] = useState<BookType | null>(null)
   const [searchSelectedBook, setSearchSelectedBook] = useState<BookType | null>(null)
 
@@ -76,14 +81,14 @@ function App() {
     setOpenAddBookModal(false)
   }
 
-  // function handleCloseReadList() {
-  //   setOpenReadList(false)
-  // }
+  function handleCloseFavouriteBooksList() {
+    setOpenFavouriteBooksList(false)
+  }
 
   
 
   if(error) {
-    return <h1>Error!</h1>
+    return <h1>Error: Unable to Books!</h1>
   }
 
   if(loading) {
@@ -114,8 +119,13 @@ function App() {
             marginInline: 'auto',
             flexDirection: 'column',
           }}>
-            
-            <TextField
+            <Box
+            display={'flex'}
+            gap={4}
+            alignItems={'center'}
+            width={'100%'}
+            >
+               <TextField
             hiddenLabel
             placeholder='Search for a book'
             defaultValue=""
@@ -125,6 +135,13 @@ function App() {
             onChange={handleSearch}
             className="w-full"
             />
+
+            <FavouriteBooksContext.Provider  value={setOpenFavouriteBooksList}>
+              <FavouriteBooks bookCount={readList.length} />
+            </FavouriteBooksContext.Provider>
+
+            </Box>
+           
             {
               isSearchInput &&
               <AddBookViewModalContext.Provider value={setOpenAddBookModal}>
@@ -228,6 +245,7 @@ function App() {
       </Box>
     </Modal>
   
+  {/* Search Book View Modal */}
     <Modal
       open={openAddBookModal}
       onClose={handleCloseAddBookModal}
@@ -257,7 +275,7 @@ function App() {
         alignItems={'center'}
         width={'100%'}
         >
-        <Typography id="modal-modal-title" variant="h5" component="h2">
+        <Typography id="modal-add-books" variant="h5" component="h2">
           Add Books to Read List
         </Typography>
 
@@ -275,6 +293,71 @@ function App() {
                
       </Box>
     </Modal>
+
+{/* Favourites Book Modal */}
+
+<Modal
+      open={openFavouriteBookModal}
+      onClose={handleCloseFavouriteBooksList}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+      
+    >
+      <Box 
+      width="500px"
+      sx={
+        {
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          bgcolor: 'background.paper',
+          boxShadow: 24,
+          maxHeight: '700px',
+          overflowY: 'scroll',
+          borderRadius: "6px",
+          ":focus": {
+            outline: 'none'
+          },
+          p: 3,
+    
+        }
+      }>
+        {/* <Box
+        display={'flex'}
+        flexDirection={'row'}
+        justifyContent={'space-between'}
+        alignItems={'center'}
+        width='500px'
+        > */}
+        <Typography id="modal-add-books" variant="h5" component="h2">
+          My Favourite Books
+        </Typography>
+
+        {/* <Button onClick={handleCloseFavouriteBooksList} sx={{color:'#335C6E', fontWeight: 600}}>close</Button>
+
+        </Box> */}
+      
+           {
+            
+            Array.from(new Set(readList), ({author, coverPhotoURL, title, readingLevel}, i) => (
+              <Fragment key={i}>
+              <BookReadListView
+                author={author}
+                title={title}
+                readingLevel={readingLevel}
+                coverPhotoURL={coverPhotoURL}
+      
+              />
+               <hr className="h-1 w-full my-1"></hr>
+
+              </Fragment>
+            ))
+           }
+               
+      </Box>
+    </Modal>
+
     </AddToReadListContext.Provider>
 
   
