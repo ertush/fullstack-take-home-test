@@ -34,7 +34,8 @@ to start frontend.
 
 Open  ``` http://localhost:5173``` on your browser
 
->> Ensure VITE_APPLO_SERVER_URI is set in your ```.env```
+
+> Ensure VITE_APPLO_SERVER_URI is set to ```http://localhost:4000``` in your ```frontend/.env```
 
 
 
