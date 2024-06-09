@@ -137,8 +137,8 @@ function App() {
                   }
                   }}
                 >
-                  <img src={logo}
-                  
+                  <img src={'../public/ello.svg'}
+
                     className="object-fit w-10 md:flex square"></img>
                   <Box
             
