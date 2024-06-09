@@ -259,7 +259,7 @@ function App() {
               alignItems={'center'}
               width={'100%'}
             >
-              <Typography id="modal-modal-title" variant="h5" component="h2">
+              <Typography id="modal-modal-title" fontWeight={700} variant="h5" component="h2">
                 Book Details
               </Typography>
 
