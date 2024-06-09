@@ -2,7 +2,7 @@
 
 import { TextField, Box, Modal, Typography, Button } from '@mui/material'
 import './App.css'
-import { useState, useRef, createContext, Fragment, useTransition } from 'react'
+import { useState, useRef, createContext, Fragment, useTransition, useDeferredValue } from 'react'
 import { useQuery, gql } from '@apollo/client';
 import Book from './components/Book';
 import BookSearchItem from './components/BookSearchItem';
@@ -52,6 +52,7 @@ function App() {
   const [selectedBook, setSelectedBook] = useState<BookType | null>(null)
   const [searchSelectedBook, setSearchSelectedBook] = useState<BookType | null>(null)
   const [isPending, startTransition] = useTransition()
+  const deferredBooks = useDeferredValue<BookType[]>(books)
 
   function handleSearch() {
 
@@ -75,15 +76,15 @@ function App() {
   }
 
 
-  function handleClose() {
+  function handlCloseBooksDetailsModal() {
     setOpenModal(false)
   }
 
-  function handleCloseAddBookModal() {
+  function handleCloseBooksDetailsModalAddBookModal() {
     setOpenAddBookModal(false)
   }
 
-  function handleCloseFavouriteBooksList() {
+  function handlCloseBooksDetailsModalFavouriteBooksList() {
     setOpenFavouriteBooksList(false)
   }
 
@@ -194,15 +195,15 @@ function App() {
                             isPending ?
                               <h5>Searching...</h5>
                               :
-                              books.length > 0
+                              deferredBooks.length > 0
                                 ?
-                                books?.map(({ author, coverPhotoURL, title, readingLevel }: BookType, i: number) => (
+                                deferredBooks?.map(({ author, coverPhotoURL, title, readingLevel }: BookType, i: number) => (
                                   <SearchInputContext.Provider key={i} value={setIsSearchInput}>
                                     <BookSearchItem author={author} coverPhotoURL={coverPhotoURL} readingLevel={readingLevel} title={title} />
                                   </SearchInputContext.Provider>
                                 ))
                                 :
-                                <h5>Could not find book</h5>
+                                <h5>Could not find {titleRef.current.value ?? 'book'}</h5>
 
                           }
                         </Box>
@@ -231,7 +232,7 @@ function App() {
         {/* Book Details View */}
         <Modal
           open={openModal}
-          onClose={handleClose}
+          onClose={handlCloseBooksDetailsModal}
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         >
@@ -262,7 +263,7 @@ function App() {
                 Book Details
               </Typography>
 
-              <Button onClick={handleCloseFavouriteBooksList} sx={{ color: '#335C6E', fontWeight: 600, backgroundColor: 'transparent', padding: 0, ":hover": { backgroundColor: 'transparent' } }}>
+              <Button onClick={handlCloseBooksDetailsModal} sx={{ color: '#335C6E', fontWeight: 600, backgroundColor: 'transparent', padding: 0, ":hover": { backgroundColor: 'transparent' } }}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                 </svg>
@@ -283,7 +284,7 @@ function App() {
         {/* Search Book View Modal */}
         <Modal
           open={openAddBookModal}
-          onClose={handleCloseAddBookModal}
+          onClose={handleCloseBooksDetailsModalAddBookModal}
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         >
@@ -293,7 +294,7 @@ function App() {
               top: '50%',
               left: '50%',
               transform: 'translate(-50%, -50%)',
-              width: 400,
+              width: 500,
               bgcolor: 'background.paper',
               boxShadow: 24,
               borderRadius: "6px",
@@ -301,6 +302,8 @@ function App() {
                 outline: 'none'
               },
               p: 3,
+             
+
             }
           }>
             <Box
@@ -310,21 +313,21 @@ function App() {
               alignItems={'center'}
               width={'100%'}
             >
-              <Typography id="modal-add-books" variant="h5" component="h2">
-                Add Books to Read List
+              <Typography id="modal-add-books" fontWeight={700} variant="h5" component="h2">
+                Add Book to Favourites
               </Typography>
 
-              <Button onClick={handleCloseAddBookModal} sx={{ color: '#335C6E', fontWeight: 600 }}>close</Button>
 
             </Box>
 
-
+          <AddBookViewModalContext.Provider value={setOpenAddBookModal}>
             <AddBookView
               author={searchSelectedBook?.author}
               title={searchSelectedBook?.title}
               readingLevel={searchSelectedBook?.readingLevel}
               coverPhotoURL={searchSelectedBook?.coverPhotoURL}
             />
+            </AddBookViewModalContext.Provider>
 
           </Box>
         </Modal>
@@ -332,7 +335,7 @@ function App() {
         {/* Favourites Book Modal */}
         <Modal
           open={openFavouriteBookModal}
-          onClose={handleCloseFavouriteBooksList}
+          onClose={handlCloseBooksDetailsModalFavouriteBooksList}
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
 
@@ -366,11 +369,11 @@ function App() {
 
             // width='500px'
             >
-              <Typography id="modal-add-books" variant="h5" component="h2">
+              <Typography id="modal-add-books" fontWeight={700} variant="h5" component="h2">
                 My Favourite Books
               </Typography>
 
-              <Button onClick={handleCloseFavouriteBooksList} sx={{ color: '#335C6E', fontWeight: 600, backgroundColor: 'transparent', padding: 0, ":hover": { backgroundColor: 'transparent' } }}>
+              <Button onClick={handlCloseBooksDetailsModalFavouriteBooksList} sx={{ color: '#335C6E', fontWeight: 600, backgroundColor: 'transparent', padding: 0, ":hover": { backgroundColor: 'transparent' } }}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                 </svg>
@@ -380,6 +383,7 @@ function App() {
 
             {
 
+              readList.length > 0 ?
               Array.from(new Set(readList), ({ author, coverPhotoURL, title, readingLevel }, i) => (
                 <Fragment key={i}>
                   <BookReadListView
@@ -393,6 +397,12 @@ function App() {
 
                 </Fragment>
               ))
+
+              :
+
+              <Typography id="modal-add-books" variant="h5" my={2} component="h2">
+                Add a book..
+              </Typography>
             }
 
           </Box>

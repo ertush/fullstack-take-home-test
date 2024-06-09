@@ -55,8 +55,7 @@ export default function BookReadListView(props: Book) {
                 onClick={handleDeleteBook}
                 sx={{
                     maxWidth: 'min',
-                    height: '40px',
-                    paddingX: "3px",
+                    padding: "4px",
                     background: '#335C6E',
                     fontWeight: 600,
                     color: '#FAAD00',

@@ -1,17 +1,20 @@
 import { Box, Button } from "@mui/material"
 import type { Book } from "./Book"
-import { AddToReadListContext } from '../App'
+import { AddBookViewModalContext, AddToReadListContext } from '../App'
 import { useContext } from "react"
 
 
 export default function AddBookView(props: Book) {
 
     const booksCtx = useContext(AddToReadListContext)
+    const setOpenModalState = useContext(AddBookViewModalContext)
 
     function handleAddToReadList() {
         booksCtx?.setBooks([...booksCtx?.books, { ...props }])
+        setOpenModalState(false)
 
     }
+
 
     return (
         <Box
@@ -20,6 +23,7 @@ export default function AddBookView(props: Book) {
             alignItems={'start'}
             gap={2}
             marginY={'20px'}
+            width={'100%'}
 
         >
 
