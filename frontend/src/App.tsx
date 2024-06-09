@@ -138,6 +138,7 @@ function App() {
                   }}
                 >
                   <img src={logo}
+                  
                     className="object-fit w-10 md:flex square"></img>
                   <Box
             
