@@ -29,7 +29,7 @@ export default function BookSearchItem(props: Book) {
       className="hover:bg-[#FAAD00] p-2 group"
       onClick={handleSelectFromSearch}
     >
-      <img src={imageURI} alt="" className="w-[85px] aspect-square cursor-pointer rounded objec-fit" />
+      <img src={imageURI} alt="" className="md:w-[85px] w-[55%] aspect-square cursor-pointer rounded objec-fit" />
       <Box
         display={'grid'}
         gridTemplateColumns={'1fr'}

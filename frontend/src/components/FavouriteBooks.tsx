@@ -13,12 +13,10 @@ export default function FavouriteBooks({ bookCount }: { bookCount: number }) {
     }
 
     return (
-        <Button onClick={handleOpenFavouriteBooksList} size={'large'} sx={{
+        <Button onClick={handleOpenFavouriteBooksList} size={'medium'} sx={{
             position: 'relative', backgroundColor: '#335c6e', 
-            borderTopLeftRadius: 0,
-            borderBottomLeftRadius: 0,
-            borderBottomRightRadius: 0,
-            color: "#FAAD00",
+            borderRadius: '4px',
+            color: '#FAAD00',
             ":hover": {
                 backgroundColor: '#335c6e',
             }
@@ -29,7 +27,7 @@ export default function FavouriteBooks({ bookCount }: { bookCount: number }) {
             display={'flex'}
             flexDirection={'row'}
             gap={1}
-            paddingInline={4}
+            paddingInline={2}
             textAlign={'center'}
             >
 
@@ -50,7 +48,7 @@ export default function FavouriteBooks({ bookCount }: { bookCount: number }) {
                         justifyContent: 'center',
                         items: 'center',
                         position: 'absolute',
-                        top: -3,
+                        top: -4,
                         right: 5,
                         backgroundColor: 'orangered',
                         width: '24px',

@@ -114,107 +114,148 @@ function App() {
 
             <div className='w-full h-full grid grid-rows-[1fr,auto]'>
 
-              <div className='w-full z-50 h-[10vh] relative mx-auto'>
+              <div className='w-full z-50 h-[10vh]  mx-auto'>
+
                 <Box
+                 
                   sx={{
-                    width: '50%',
-                    marginInline: 'auto',
-                    flexDirection: 'column',
-                  }}>
+                    display: 'flex',
+                    width: '100%',
+                    flexDirection: "column-reverse",
+                    justifyContent: 'space-evenly',
+                    alignItems:'center',
+                    gap: 1,
+                    
+                    "@media (min-width: 768px)": {
+                      flexDirection: "row",
+                      justifyContent: 'space-between',
+                      alignItems:'start',
+                      gap:0,
+                      
+
+                  }
+                  }}
+                >
+                  <img src='https://github-production-user-asset-6210df.s3.amazonaws.com/3518127/275810257-561bc8d4-bffc-4360-b9ea-61e876bcec93.svg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20240609%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240609T150345Z&X-Amz-Expires=300&X-Amz-Signature=721734f9d026563c19627ce2f71e1d5f4c4b6fe1c4f08ada4c5d5985da0c6319&X-Amz-SignedHeaders=host&actor_id=33453574&key_id=0&repo_id=706123695'
+                    className="object-fit w-10 md:flex square"></img>
                   <Box
-                    display={'flex'}
-                    alignItems={'center'}
-                    width={'100%'}
-                  >
-                    <TextField
-                      hiddenLabel
-                      placeholder='Search for a book'
-                      defaultValue=""
-                      variant="filled"
-                      size="small"
-                      inputRef={titleRef}
-                      onChange={handleSearch}
-                      sx={{ width: '100%', position: "relative" }}
-                    />
-                    {
-                      titleRef.current?.value !== "" &&
-                      titleRef.current !== null &&
-                      <Button
-                        sx={{
-                          position: 'absolute',
-                          right: '38%',
-                          color: '#fffff',
-                          backgroundColor: 'transparent',
-                          ":hover": {
-                            backgroundColor: 'transparent'
-                          }
-                        }}
-                        onClick={handleClearSearch}
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                        </svg>
+            
+                    sx={{
+                      width: '100%',
+                      // marginInline: 'auto',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      flexDirection: 'column',
+
+                    }}>
+                    <Box 
+                    position={'relative'} 
+                    alignSelf='center' 
+                    sx={{
+                      width: "100%",
+                      
+                      "@media (min-width: 768px)": {
+                      width: "60%",
+                      }
+                    }} 
+                   >
+                      <TextField
+                        hiddenLabel
+                        placeholder='Search for a book'
+                        defaultValue=""
+                        variant="filled"
+                        size="small"
+                        inputRef={titleRef}
+                        onChange={handleSearch}
+                        sx={{ width: '100%', alignSelf: 'center' }}
+                      />
+                      {
+                        titleRef.current?.value !== "" &&
+                        titleRef.current !== null &&
+                        <Button
+                          sx={{
+                            position: 'absolute',
+                            right: 0,
+                            color: '#fffff',
+                            backgroundColor: 'transparent',
+                            ":hover": {
+                              backgroundColor: 'transparent'
+                            }
+                          }}
+                          onClick={handleClearSearch}
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                          </svg>
 
 
-                      </Button>
-                    }
+                        </Button>
+                      }
 
-                    <FavouriteBooksContext.Provider value={setOpenFavouriteBooksList}>
-                      <FavouriteBooks bookCount={readList.length} />
-                    </FavouriteBooksContext.Provider>
+                      {
+                        isSearchInput &&
+                        <AddBookViewModalContext.Provider value={setOpenAddBookModal}>
+                          <SearchSelectContext.Provider value={setSearchSelectedBook} >
+                            <Box
+
+                              sx={{
+                                width: "100%",
+                                maxHeight: "300px",
+                                padding: "5px",
+                                background: "#f0f0f0",
+                                flexDirection: "column",
+                                borderBottomLeftRadius: "5px",
+                                borderBottomRightRadius: "5px",
+                                alignItems: "start",
+                                display: 'flex',
+                                gap: "10px",
+                                overflowY: "scroll",
+                                alignSelf: 'center'
+
+                              }}
+
+
+
+                            >
+
+                              {
+
+                                isPending ?
+                                  <h5>Searching...</h5>
+                                  :
+                                  deferredBooks.length > 0
+                                    ?
+                                    deferredBooks?.map(({ author, coverPhotoURL, title, readingLevel }: BookType, i: number) => (
+                                      <SearchInputContext.Provider key={i} value={setIsSearchInput}>
+                                        <BookSearchItem author={author} coverPhotoURL={coverPhotoURL} readingLevel={readingLevel} title={title} />
+                                      </SearchInputContext.Provider>
+                                    ))
+                                    :
+                                    <h5>Could not find {titleRef.current.value ?? 'book'}</h5>
+
+                              }
+                            </Box>
+                          </SearchSelectContext.Provider>
+                        </AddBookViewModalContext.Provider>
+                      }
+                    </Box>
 
                   </Box>
 
-                  {
-                    isSearchInput &&
-                    <AddBookViewModalContext.Provider value={setOpenAddBookModal}>
-                      <SearchSelectContext.Provider value={setSearchSelectedBook} >
-                        <Box
 
-                          sx={{
-                            width: "100%",
-                            maxHeight: "300px",
-                            padding: "5px",
-                            background: "#f0f0f0",
-                            flexDirection: "column",
-                            borderBottomLeftRadius: "5px",
-                            borderBottomRightRadius: "5px",
-                            alignItems: "start",
-                            display: 'flex',
-                            gap: "10px",
-                            overflowY: "scroll",
-
-                          }}
+                  <FavouriteBooksContext.Provider value={setOpenFavouriteBooksList}>
+                    <FavouriteBooks bookCount={readList.length} />
+                  </FavouriteBooksContext.Provider>
 
 
 
-                        >
 
-                          {
-
-                            isPending ?
-                              <h5>Searching...</h5>
-                              :
-                              deferredBooks.length > 0
-                                ?
-                                deferredBooks?.map(({ author, coverPhotoURL, title, readingLevel }: BookType, i: number) => (
-                                  <SearchInputContext.Provider key={i} value={setIsSearchInput}>
-                                    <BookSearchItem author={author} coverPhotoURL={coverPhotoURL} readingLevel={readingLevel} title={title} />
-                                  </SearchInputContext.Provider>
-                                ))
-                                :
-                                <h5>Could not find {titleRef.current.value ?? 'book'}</h5>
-
-                          }
-                        </Box>
-                      </SearchSelectContext.Provider>
-                    </AddBookViewModalContext.Provider>
-                  }
 
                 </Box>
 
               </div>
-              <div className='w-full overflow-scroll-y min-h-[30vh] grid grid-cols-5  items-center justify-center gap-4'>
+
+              <div className='w-full overflow-scroll-y min-h-[30vh] mt-12 md:mt-0 grid md:grid-cols-5 grid-cols-1 items-center justify-center gap-4'>
                 {
                   data.books?.map(({ author, coverPhotoURL, title, readingLevel }: BookType, i: number) => (
                     <Book key={i} author={author} coverPhotoURL={coverPhotoURL} readingLevel={readingLevel} title={title} />
@@ -235,6 +276,8 @@ function App() {
           onClose={handlCloseBooksDetailsModal}
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
+        
+         
         >
           <Box sx={
             {
@@ -249,6 +292,8 @@ function App() {
               ":focus": {
                 outline: 'none'
               },
+
+
               p: 3,
             }
           }>
@@ -294,7 +339,7 @@ function App() {
               top: '50%',
               left: '50%',
               transform: 'translate(-50%, -50%)',
-              width: 500,
+              width: "90%",
               bgcolor: 'background.paper',
               boxShadow: 24,
               borderRadius: "6px",
@@ -302,7 +347,12 @@ function App() {
                 outline: 'none'
               },
               p: 3,
-             
+              
+              "@media (min-width: 768px)": {
+                width: 500,
+                }
+          
+
 
             }
           }>
@@ -320,13 +370,13 @@ function App() {
 
             </Box>
 
-          <AddBookViewModalContext.Provider value={setOpenAddBookModal}>
-            <AddBookView
-              author={searchSelectedBook?.author}
-              title={searchSelectedBook?.title}
-              readingLevel={searchSelectedBook?.readingLevel}
-              coverPhotoURL={searchSelectedBook?.coverPhotoURL}
-            />
+            <AddBookViewModalContext.Provider value={setOpenAddBookModal}>
+              <AddBookView
+                author={searchSelectedBook?.author}
+                title={searchSelectedBook?.title}
+                readingLevel={searchSelectedBook?.readingLevel}
+                coverPhotoURL={searchSelectedBook?.coverPhotoURL}
+              />
             </AddBookViewModalContext.Provider>
 
           </Box>
@@ -341,7 +391,7 @@ function App() {
 
         >
           <Box
-            width="500px"
+          
             sx={
               {
                 position: 'absolute',
@@ -352,11 +402,16 @@ function App() {
                 boxShadow: 24,
                 maxHeight: '700px',
                 overflowY: 'scroll',
+                width:"90%",
                 borderRadius: "6px",
                 ":focus": {
                   outline: 'none'
                 },
                 p: 3,
+                "@media (min-width: 768px)": {
+                  width: 500,
+                  }
+            
 
               }
             }>
@@ -384,25 +439,25 @@ function App() {
             {
 
               readList.length > 0 ?
-              Array.from(new Set(readList), ({ author, coverPhotoURL, title, readingLevel }, i) => (
-                <Fragment key={i}>
-                  <BookReadListView
-                    author={author}
-                    title={title}
-                    readingLevel={readingLevel}
-                    coverPhotoURL={coverPhotoURL}
+                Array.from(new Set(readList), ({ author, coverPhotoURL, title, readingLevel }, i) => (
+                  <Fragment key={i}>
+                    <BookReadListView
+                      author={author}
+                      title={title}
+                      readingLevel={readingLevel}
+                      coverPhotoURL={coverPhotoURL}
 
-                  />
-                  <hr className="h-1 w-full my-1"></hr>
+                    />
+                    <hr className="h-1 w-full my-1"></hr>
 
-                </Fragment>
-              ))
+                  </Fragment>
+                ))
 
-              :
+                :
 
-              <Typography id="modal-add-books" variant="h5" my={2} component="h2">
-                Add a book..
-              </Typography>
+                <Typography id="modal-add-books" variant="h5" my={2} component="h2">
+                  Add a book..
+                </Typography>
             }
 
           </Box>
