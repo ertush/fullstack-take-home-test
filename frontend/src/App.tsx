@@ -2,7 +2,7 @@
 
 import { TextField, Box, Modal, Typography, Button } from '@mui/material'
 import './App.css'
-import { useState, useRef, createContext, Fragment } from 'react'
+import { useState, useRef, createContext, Fragment, useTransition } from 'react'
 import { useQuery, gql } from '@apollo/client';
 import Book from './components/Book';
 import BookSearchItem from './components/BookSearchItem';
@@ -51,23 +51,26 @@ function App() {
   const [openFavouriteBookModal, setOpenFavouriteBooksList] = useState<boolean>(false)
   const [selectedBook, setSelectedBook] = useState<BookType | null>(null)
   const [searchSelectedBook, setSearchSelectedBook] = useState<BookType | null>(null)
+  const [isPending, startTransition] = useTransition()
 
   function handleSearch() {
-
-    console.log(isSearchInput)
 
 
     if (!isSearchInput) setIsSearchInput(true)
 
     if (titleRef.current.value == "") setIsSearchInput(false)
 
-    setBooks(() => {
+    const filteredBooks = () => {
       return data.books?.filter(({ title }: BookType) => {
         return title?.toLocaleLowerCase().trim().includes(
           titleRef.current.value.toLocaleLowerCase().trim()
         )
       })
-    })
+    }
+
+    startTransition(filteredBooks)
+
+    setBooks(filteredBooks)
 
   }
 
@@ -84,6 +87,11 @@ function App() {
     setOpenFavouriteBooksList(false)
   }
 
+
+  function handleClearSearch() {
+    titleRef.current.value = ""
+    setIsSearchInput(false)
+  }
 
 
   if (error) {
@@ -114,7 +122,6 @@ function App() {
                   }}>
                   <Box
                     display={'flex'}
-                    gap={4}
                     alignItems={'center'}
                     width={'100%'}
                   >
@@ -126,8 +133,30 @@ function App() {
                       size="small"
                       inputRef={titleRef}
                       onChange={handleSearch}
-                      className="w-full"
+                      sx={{ width: '100%', position: "relative" }}
                     />
+                    {
+                      titleRef.current?.value !== "" &&
+                      titleRef.current !== null &&
+                      <Button
+                        sx={{
+                          position: 'absolute',
+                          right: '38%',
+                          color: '#fffff',
+                          backgroundColor: 'transparent',
+                          ":hover": {
+                            backgroundColor: 'transparent'
+                          }
+                        }}
+                        onClick={handleClearSearch}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                        </svg>
+
+
+                      </Button>
+                    }
 
                     <FavouriteBooksContext.Provider value={setOpenFavouriteBooksList}>
                       <FavouriteBooks bookCount={readList.length} />
@@ -143,7 +172,7 @@ function App() {
 
                           sx={{
                             width: "100%",
-                            maxHeight: "200px",
+                            maxHeight: "300px",
                             padding: "5px",
                             background: "#f0f0f0",
                             flexDirection: "column",
@@ -160,19 +189,27 @@ function App() {
 
                         >
 
-
                           {
-                            books?.map(({ author, coverPhotoURL, title, readingLevel }: BookType, i: number) => (
-                              <SearchInputContext.Provider key={i} value={setIsSearchInput}>
-                                <BookSearchItem author={author} coverPhotoURL={coverPhotoURL} readingLevel={readingLevel} title={title} />
-                              </SearchInputContext.Provider>
-                            ))
+
+                            isPending ?
+                              <h5>Searching...</h5>
+                              :
+                              books.length > 0
+                                ?
+                                books?.map(({ author, coverPhotoURL, title, readingLevel }: BookType, i: number) => (
+                                  <SearchInputContext.Provider key={i} value={setIsSearchInput}>
+                                    <BookSearchItem author={author} coverPhotoURL={coverPhotoURL} readingLevel={readingLevel} title={title} />
+                                  </SearchInputContext.Provider>
+                                ))
+                                :
+                                <h5>Could not find book</h5>
 
                           }
                         </Box>
                       </SearchSelectContext.Provider>
                     </AddBookViewModalContext.Provider>
                   }
+
                 </Box>
 
               </div>
@@ -191,6 +228,7 @@ function App() {
           </SetSelectedBookContext.Provider>
         </ModalControlContext.Provider>
 
+        {/* Book Details View */}
         <Modal
           open={openModal}
           onClose={handleClose}
@@ -224,7 +262,11 @@ function App() {
                 Book Details
               </Typography>
 
-              <Button onClick={() => setOpenModal(false)} sx={{ color: '#335C6E', fontWeight: 600 }}>close</Button>
+              <Button onClick={handleCloseFavouriteBooksList} sx={{ color: '#335C6E', fontWeight: 600, backgroundColor: 'transparent', padding: 0, ":hover": { backgroundColor: 'transparent' } }}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                </svg>
+              </Button>
 
             </Box>
 
@@ -288,7 +330,6 @@ function App() {
         </Modal>
 
         {/* Favourites Book Modal */}
-
         <Modal
           open={openFavouriteBookModal}
           onClose={handleCloseFavouriteBooksList}
@@ -316,20 +357,26 @@ function App() {
 
               }
             }>
-            {/* <Box
-        display={'flex'}
-        flexDirection={'row'}
-        justifyContent={'space-between'}
-        alignItems={'center'}
-        width='500px'
-        > */}
-            <Typography id="modal-add-books" variant="h5" component="h2">
-              My Favourite Books
-            </Typography>
+            <Box
+              display={'flex'}
+              flexDirection={'row'}
+              justifyContent={'space-between'}
+              alignItems={'center'}
 
-            {/* <Button onClick={handleCloseFavouriteBooksList} sx={{color:'#335C6E', fontWeight: 600}}>close</Button>
 
-        </Box> */}
+            // width='500px'
+            >
+              <Typography id="modal-add-books" variant="h5" component="h2">
+                My Favourite Books
+              </Typography>
+
+              <Button onClick={handleCloseFavouriteBooksList} sx={{ color: '#335C6E', fontWeight: 600, backgroundColor: 'transparent', padding: 0, ":hover": { backgroundColor: 'transparent' } }}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                </svg>
+              </Button>
+
+            </Box>
 
             {
 
