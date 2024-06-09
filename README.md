@@ -3,6 +3,8 @@
 
 # Setting up the Take away Assigment
 
+:link: [https://fullstack-take-home-test.vercel.app/](https://fullstack-take-home-test.vercel.app/)
+
 👋 Hello,
 
 To setup the app in you local machine, do as follows:
