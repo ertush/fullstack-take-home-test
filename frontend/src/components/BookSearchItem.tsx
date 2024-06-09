@@ -2,12 +2,15 @@ import { Box } from "@mui/material"
 import { useContext } from "react"
 import type { Book } from "./Book"
 import { SearchSelectContext, AddBookViewModalContext, SearchInputContext } from '../App'
+import images from '../assets/images.json'
 
 export default function BookSearchItem(props: Book) {
 
   const setSearchSelectedBook = useContext(SearchSelectContext)
   const openAddBookViewModal = useContext(AddBookViewModalContext)
   const setIsSearchInput = useContext(SearchInputContext)
+
+  const imageURI = import.meta.env.DEV ? `/src/${props.coverPhotoURL}` : images.find(({name}) => name == props.coverPhotoURL)?.url
 
 
   function handleSelectFromSearch() {
@@ -26,7 +29,7 @@ export default function BookSearchItem(props: Book) {
       className="hover:bg-[#FAAD00] p-2 group"
       onClick={handleSelectFromSearch}
     >
-      <img src={`/src/${props.coverPhotoURL}`} alt="" className="w-[85px] aspect-square cursor-pointer rounded objec-fit" />
+      <img src={imageURI} alt="" className="w-[85px] aspect-square cursor-pointer rounded objec-fit" />
       <Box
         display={'grid'}
         gridTemplateColumns={'1fr'}

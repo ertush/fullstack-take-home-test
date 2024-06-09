@@ -2,12 +2,15 @@ import { Box, Button } from "@mui/material"
 import type { Book } from "./Book"
 import { AddBookViewModalContext, AddToReadListContext } from '../App'
 import { useContext } from "react"
-
+import images from '../assets/images.json'
 
 export default function AddBookView(props: Book) {
 
     const booksCtx = useContext(AddToReadListContext)
     const setOpenModalState = useContext(AddBookViewModalContext)
+
+    const imageURI = import.meta.env.DEV ? `/src/${props.coverPhotoURL}` : images.find(({name}) => name == props.coverPhotoURL)?.url
+
 
     function handleAddToReadList() {
         booksCtx?.setBooks([...booksCtx?.books, { ...props }])
@@ -27,7 +30,7 @@ export default function AddBookView(props: Book) {
 
         >
 
-            <img src={`/src/${props?.coverPhotoURL}`} alt="Book Cover Photo" className="w-[120px] object-fit rounded-md aspect-square">
+            <img src={imageURI} alt="Book Cover Photo" className="w-[120px] object-fit rounded-md aspect-square">
             </img>
 
 

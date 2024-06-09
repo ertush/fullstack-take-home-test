@@ -1,6 +1,7 @@
 import { Box, Button } from "@mui/material"
 import { useContext } from "react"
 import { AddToReadListContext, ModalControlContext, SetSelectedBookContext } from "../App"
+import images from '../assets/images.json'
 
 export type Book = {
   author: string | null | undefined,
@@ -29,6 +30,8 @@ export default function Book(props: Book) {
     booksCtx?.setBooks([...booksCtx?.books, { ...props }])
   }
 
+  const imageURI = import.meta.env.DEV ? `/src/${props.coverPhotoURL}` : images.find(({name}) => name == props.coverPhotoURL)?.url 
+
   return (
     <Box
       display={'flex'}
@@ -42,7 +45,7 @@ export default function Book(props: Book) {
         justifyContent={'space-between'}
         width={'100%'}
       >
-        <img src={`/src/${props.coverPhotoURL}`} alt="Book Cover Photo" className="w-[90px] object-fit rounded-md aspect-square">
+        <img src={imageURI} alt="Book Cover Photo" className="w-[90px] object-fit rounded-md aspect-square">
         </img>
 
         <Box

@@ -2,10 +2,14 @@ import { Box, Button } from "@mui/material"
 import type { Book } from "./Book"
 import { AddToReadListContext } from "../App"
 import { useContext } from "react"
+import images from '../assets/images.json'
 
 export default function BookReadListView(props: Book) {
 
     const booksCtx = useContext(AddToReadListContext)
+
+    const imageURI = import.meta.env.DEV ? `/src/${props.coverPhotoURL}` : images.find(({ name }) => name == props.coverPhotoURL)?.url
+
 
     function handleDeleteBook() {
         booksCtx?.setBooks(() => {
@@ -27,7 +31,7 @@ export default function BookReadListView(props: Book) {
 
         >
 
-            <img src={`/src/${props?.coverPhotoURL}`} alt="Book Cover Photo" className="w-[120px] object-fit self-start rounded-md aspect-square">
+            <img src={imageURI} alt="Book Cover Photo" className="w-[120px] object-fit self-start rounded-md aspect-square">
             </img>
 
 

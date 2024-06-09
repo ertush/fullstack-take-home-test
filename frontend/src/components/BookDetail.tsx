@@ -1,10 +1,12 @@
 import { Box } from "@mui/material"
 import type { Book } from "./Book"
+import images from '../assets/images.json'
 
 
 export default function BookDetails(props: Book) {
 
 
+  const imageURI = import.meta.env.DEV ? `/src/${props.coverPhotoURL}` : images.find(({name}) => name == props.coverPhotoURL)?.url 
 
   return (
     <Box
@@ -16,7 +18,7 @@ export default function BookDetails(props: Book) {
 
     >
 
-      <img src={`/src/${props?.coverPhotoURL}`} alt="Book Cover Photo" className="w-[120px] object-fit rounded-md aspect-square">
+      <img src={imageURI} alt="Book Cover Photo" className="w-[120px] object-fit rounded-md aspect-square">
       </img>
 
 
