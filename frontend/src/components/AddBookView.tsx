@@ -9,7 +9,7 @@ export default function AddBookView(props: Book) {
     const booksCtx = useContext(AddToReadListContext)
     const setOpenModalState = useContext(AddBookViewModalContext)
 
-    const imageURI = import.meta.env.DEV ? `/src/${props.coverPhotoURL}` : images.find(({name}) => name == props.coverPhotoURL)?.url
+    const imageURI = import.meta.env.DEV ? `/src/${props.coverPhotoURL}` : images.find(({name}) => name == props.coverPhotoURL?.replace('assets/', ''))?.url 
 
 
     function handleAddToReadList() {

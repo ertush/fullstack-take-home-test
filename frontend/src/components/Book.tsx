@@ -30,7 +30,7 @@ export default function Book(props: Book) {
     booksCtx?.setBooks([...booksCtx?.books, { ...props }])
   }
 
-  const imageURI = import.meta.env.DEV ? `/src/${props.coverPhotoURL}` : images.find(({name}) => name == props.coverPhotoURL)?.url 
+  const imageURI = import.meta.env.DEV ? `/src/${props.coverPhotoURL}` : images.find(({name}) => name == props.coverPhotoURL?.replace('assets/', ''))?.url 
 
   return (
     <Box

@@ -6,7 +6,8 @@ import images from '../assets/images.json'
 export default function BookDetails(props: Book) {
 
 
-  const imageURI = import.meta.env.DEV ? `/src/${props.coverPhotoURL}` : images.find(({name}) => name == props.coverPhotoURL)?.url 
+  const imageURI = import.meta.env.DEV ? `/src/${props.coverPhotoURL}` : images.find(({name}) => name == props.coverPhotoURL?.replace('assets/', ''))?.url  
+  // console.log({imageURI})
 
   return (
     <Box
