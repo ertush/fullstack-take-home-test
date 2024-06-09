@@ -12,6 +12,7 @@ import BookDetails from './components/BookDetail';
 import AddBookView from './components/AddBookView';
 import FavouriteBooks from './components/FavouriteBooks';
 import BookReadListView from './components/BookReadListView';
+import logo from '../public/ello.svg'
 
 
 const GET_BOOKS = gql`
@@ -136,7 +137,7 @@ function App() {
                   }
                   }}
                 >
-                  <img src='https://github-production-user-asset-6210df.s3.amazonaws.com/3518127/275810257-561bc8d4-bffc-4360-b9ea-61e876bcec93.svg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20240609%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240609T150345Z&X-Amz-Expires=300&X-Amz-Signature=721734f9d026563c19627ce2f71e1d5f4c4b6fe1c4f08ada4c5d5985da0c6319&X-Amz-SignedHeaders=host&actor_id=33453574&key_id=0&repo_id=706123695'
+                  <img src={logo}
                     className="object-fit w-10 md:flex square"></img>
                   <Box
             
