@@ -23,7 +23,7 @@ to start backend
 
 and
 
-``` cd fullstack-take-home-test/backend/src/frontend/ello-frontend ```
+``` cd fullstack-take-home-test/frontend ```
 
 then
 
@@ -33,6 +33,8 @@ then
 to start frontend.
 
 Open  ``` http://localhost:5173``` on your browser
+
+>> Ensure VITE_APPLO_SERVER_URI is set in your ```.env```
 
 
 
